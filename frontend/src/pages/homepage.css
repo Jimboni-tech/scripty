@@ -9,9 +9,9 @@
     /* Adjust based on header/footer height */
     padding: 20px;
     text-align: center;
-    background-color: var(--bg-dark);
-    /* Using your existing dark background */
-    color: var(--text-primary);
+    background-color: var(--bg-light);
+    /* Using your existing light background */
+    color: var(--text-dark-primary);
     font-family: 'Inter', sans-serif;
 }
 
@@ -25,7 +25,7 @@
 
 .homepage-description {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     max-width: 600px;
     line-height: 1.6;
     margin-bottom: 30px;
@@ -57,28 +57,28 @@
 }
 
 .homepage-link:first-child:hover {
-    background-color: #16a34a;
+    background-color: color-mix(in srgb, var(--accent-green) 85%, black);
     /* Darker green */
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .homepage-link:last-child {
     /* Login / Register button */
-    background-color: var(--highlight-light);
-    color: var(--text-primary);
-    border: 1px solid var(--border-subtle);
+    background-color: var(--highlight-hover);
+    color: var(--text-dark-primary);
+    border: 1px solid var(--border-light);
 }
 
 .homepage-link:last-child:hover {
-    background-color: var(--highlight-strong);
+    background-color: var(--highlight-active);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .homepage-footer {
     font-size: 0.9rem;
-    color: var(--text-faded);
+    color: var(--text-dark-faded);
     font-style: italic;
     margin-top: 50px;
 }
@@ -101,4 +101,5 @@
     .homepage-link {
         width: 80%;
         /* Make buttons wider on small screens */
-    } }
+    }
+}

@@ -1,0 +1,84 @@
+/* src/components/mindmapinstructions.css */
+
+.mindmap-instructions {
+    /* Basic styling for the container */
+    background-color: #ffffff;
+    /* White background for the box */
+    border: 1px solid #e0e0e0;
+    /* Light gray border */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 20px;
+    /* Internal padding */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    /* Subtle shadow */
+    font-family: 'Inter', sans-serif;
+    /* Consistent font */
+    max-width: 300px;
+    /* Limit width for a box-like appearance */
+    margin: 20px auto;
+    /* Center the box and give some margin */
+    margin-top: 100px;
+}
+
+.instructions-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-dark-primary);
+    /* Use header's primary text color */
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.instructions-list {
+    list-style-type: none;
+    /* Remove default bullet points */
+    padding: 0;
+    margin: 0;
+    /* Remove default margins */
+}
+
+.instructions-list li {
+    font-size: 0.95em;
+    color: var(--text-dark-secondary);
+    /* Use header's secondary text color */
+    margin-bottom: 8px;
+    padding-left: 20px;
+    /* Space for custom bullet */
+    position: relative;
+}
+
+.instructions-list li:last-child {
+    margin-bottom: 0;
+}
+
+.instructions-list li::before {
+    content: '•';
+    /* Custom bullet point */
+    color: var(--accent-blue);
+    /* Accent color for bullets */
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .mindmap-instructions {
+        max-width: 90%;
+        /* Adjust max-width for smaller screens */
+        margin: 15px auto;
+        padding: 15px;
+    }
+
+    .instructions-title {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .instructions-list li {
+        font-size: 0.9em;
+        margin-bottom: 6px;
+        padding-left: 18px;
+    }
+}

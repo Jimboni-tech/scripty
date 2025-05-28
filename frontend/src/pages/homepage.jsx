@@ -6,9 +6,9 @@ import './homepage.css'; // Create this CSS file for styling
 const HomePage = () => {
   return (
     <div className="homepage-container">
-      <h1 className="homepage-title">Welcome to Your Mind Map Application!</h1>
+      <h1 className="homepage-title">Introducing Scripty, your personal AI-powered script building tool.</h1>
       <p className="homepage-description">
-        Organize your thoughts, plan projects, and brainstorm ideas with ease.
+        Build scripts with ease
       </p>
       <div className="homepage-actions">
         <Link to="/dashboard" className="homepage-link">Go to Dashboard</Link>

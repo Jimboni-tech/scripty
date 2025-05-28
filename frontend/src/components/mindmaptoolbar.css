@@ -5,23 +5,23 @@
 
 /* Root Variables (Duplicated for convenience, but ideally would be in a global CSS file or shared) */
 :root {
-    --bg-dark: #0d0d0d;
-    --surface-dark: #1a1a1a;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-faded: #606060;
+    --bg-light: #f4f6f8;
+    --surface-light: #ffffff;
+    --border-light: #e0e0e0;
+    --text-dark-primary: #212121;
+    --text-dark-secondary: #6b7280;
+    --text-dark-faded: #a0a0a0;
 
-    --accent-red: #ef4444;
-    --accent-orange: #f97316;
-    --accent-yellow: #eab308;
-    --accent-green: #22c55e;
-    --accent-blue: #3b82f6;
-    --accent-purple: #a855f7;
-    --accent-pink: #ec4899;
+    --accent-red: #ff4d4f;
+    --accent-orange: #faad14;
+    --accent-yellow: #fadb14;
+    --accent-green: #52c41a;
+    --accent-blue: #1890ff;
+    --accent-purple: #722ed1;
+    --accent-pink: #eb2f96;
 
-    --highlight-light: rgba(255, 255, 255, 0.1);
-    --highlight-strong: rgba(255, 255, 255, 0.15);
+    --highlight-hover: rgba(0, 0, 0, 0.04);
+    --highlight-active: rgba(0, 0, 0, 0.08);
 }
 
 .mindmap-toolbar-wrapper {
@@ -38,14 +38,14 @@
 }
 
 .mindmap-toolbar {
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
     padding: 10px 16px;
     display: flex;
     gap: 8px;
     /* Gap between sections */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -60,7 +60,7 @@
     content: '';
     width: 1px;
     height: 24px;
-    background-color: var(--border-subtle);
+    background-color: var(--border-light);
     margin-left: 8px;
     /* Space after the separator */
 }
@@ -81,7 +81,7 @@
     position: relative;
     overflow: hidden;
     white-space: nowrap;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     background-color: transparent;
 }
 
@@ -98,28 +98,28 @@
 }
 
 .btn-primary {
-    background-color: var(--highlight-light);
+    background-color: var(--highlight-hover);
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: var(--highlight-strong);
+    background-color: var(--highlight-active);
     transform: translateY(-1px);
 }
 
 .btn-primary:active:not(:disabled) {
     transform: translateY(0);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.02);
 }
 
 .btn-secondary {
     /* Re-added for MindMapToolbar */
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
 }
 
 .btn-secondary:hover:not(:disabled) {
     /* Re-added for MindMapToolbar */
-    background-color: var(--highlight-light);
-    color: var(--text-primary);
+    background-color: var(--highlight-hover);
+    color: var(--text-dark-primary);
     transform: translateY(-1px);
 }
 
@@ -128,19 +128,19 @@
 }
 
 .btn-danger:hover:not(:disabled) {
-    background-color: rgba(239, 68, 68, 0.1);
+    background-color: rgba(255, 77, 79, 0.1);
     color: var(--accent-red);
     transform: translateY(-1px);
 }
 
 .btn-info {
     /* Re-added for Load button */
-    background-color: var(--highlight-light);
+    background-color: var(--highlight-hover);
 }
 
 .btn-info:hover:not(:disabled) {
     /* Re-added for Load button */
-    background-color: var(--highlight-strong);
+    background-color: var(--highlight-active);
     transform: translateY(-1px);
 }
 
@@ -152,7 +152,7 @@
 
 .btn-success:hover:not(:disabled) {
     /* Re-added for New button */
-    background-color: #16a34a;
+    background-color: color-mix(in srgb, var(--accent-green) 85%, black);
     /* Darker green */
     transform: translateY(-1px);
 }
@@ -165,7 +165,7 @@
 
 .btn-warning:hover:not(:disabled) {
     /* Re-added for Logout button */
-    background-color: #ea580c;
+    background-color: color-mix(in srgb, var(--accent-orange) 85%, black);
     /* Darker orange */
     transform: translateY(-1px);
 }
@@ -188,14 +188,14 @@
     bottom: calc(100% + 8px);
     /* Position above the button */
     left: 0;
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 8px 0;
     min-width: 180px;
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 11;
     transform-origin: bottom;
     animation: slideUpAndFadeIn 0.2s ease-out forwards;
@@ -223,7 +223,7 @@
     background: transparent;
     border: none;
     text-align: left;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     font-size: 13px;
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -236,12 +236,12 @@
     /* Re-added */
     display: block;
     font-size: 0.75em;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
 }
 
 .dropdown-item:hover {
     /* Re-added */
-    background-color: var(--highlight-light);
+    background-color: var(--highlight-hover);
 }
 
 .dropdown-item.active {
@@ -257,7 +257,7 @@
 
 .dropdown-item.no-maps {
     /* Re-added */
-    color: var(--text-faded);
+    color: var(--text-dark-faded);
     text-align: center;
     cursor: default;
     padding: 12px 16px;
@@ -271,7 +271,7 @@
 
 .dropdown-footer {
     /* Re-added */
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid var(--border-light);
     padding-top: 8px;
     margin-top: 8px;
     text-align: center;
@@ -281,7 +281,7 @@
     /* Re-added */
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     cursor: pointer;
     font-size: 12px;
     display: inline-flex;
@@ -292,7 +292,7 @@
 
 .btn-close-dropdown:hover {
     /* Re-added */
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
 }
 
 
@@ -308,7 +308,7 @@
     /* Re-added and original styles */
     font-size: 15px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     cursor: pointer;
     padding: 6px 10px;
     border-radius: 6px;
@@ -317,19 +317,19 @@
 
 .map-title-display:hover {
     /* Re-added and original styles */
-    background-color: var(--highlight-light);
+    background-color: var(--highlight-hover);
 }
 
 .map-title-input {
     /* Re-added and original styles */
-    background: var(--bg-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     padding: 6px 10px;
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     outline: none;
     text-align: center;
     width: 180px;
@@ -339,7 +339,7 @@
 .map-title-input:focus {
     /* Re-added and original styles */
     border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
 }
 
 
@@ -348,7 +348,7 @@
     /* Re-added and original styles */
     margin-left: 16px;
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     display: flex;
     align-items: center;
     white-space: nowrap;
@@ -359,17 +359,17 @@
 .user-name {
     /* Re-added and original styles */
     margin-right: 8px;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
 }
 
 .toolbar-message {
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 8px 16px;
     font-size: 12px;
-    color: var(--text-secondary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: var(--text-dark-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     min-width: 250px;
     text-align: center;
     opacity: 0.9;

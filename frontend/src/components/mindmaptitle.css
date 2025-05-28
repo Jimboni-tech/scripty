@@ -3,13 +3,13 @@
 /* Important: Ensure these variables are accessible, e.g., by importing mindmap.css globally
    or by re-defining them here if this component is truly standalone */
 :root {
-    --bg-dark: #0d0d0d;
-    --surface-dark: #1a1a1a;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-faded: #606060;
-    --accent-blue: #3b82f6;
+    --bg-light: #f4f6f8;
+    --surface-light: #ffffff;
+    --border-light: #e0e0e0;
+    --text-dark-primary: #212121;
+    --text-dark-secondary: #6b7280;
+    --text-dark-faded: #a0a0a0;
+    --accent-blue: #1890ff;
     /* For caret and highlight */
 }
 
@@ -29,26 +29,27 @@
     justify-content: flex-start;
     /* Added min-width to ensure clickability if title is very short */
     min-width: 100px;
+    margin-top: 60px;
 }
 
 .mindmap-title-editor:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.03);
     /* Subtle hover background */
 }
 
 .mindmap-title-editor .title-display {
-    font-size: 1.3em;
-    /* Reduced from 1.8em */
+    font-size: 2em;
+    /* Increased for more prominence */
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     cursor: text;
-    padding: 6px 10px;
-    /* Reduced from 8px 12px */
+    padding: 8px 12px;
+    /* Increased padding for better visual space */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 250px;
-    /* Reduced from 350px - adjust as needed */
+    max-width: 400px;
+    /* Increased max-width to accommodate larger text */
     line-height: 1.2;
     transition: color 0.2s ease;
     border-radius: 6px;
@@ -59,29 +60,28 @@
 }
 
 .mindmap-title-editor .title-input {
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
-    padding: 6px 10px;
-    /* Reduced from 8px 12px */
-    font-size: 1.3em;
-    /* Reduced from 1.8em */
+    padding: 8px 12px;
+    /* Increased padding to match display */
+    font-size: 2em;
+    /* Increased to match display */
     font-weight: 700;
-    color: var(--text-primary);
-    width: 250px;
+    color: var(--text-dark-primary);
+    width: 400px;
     /* Explicitly set width to match max-width of display */
-    /* Removed max-width to avoid conflict; width is now fixed */
     outline: none;
     caret-color: var(--accent-blue);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     /* Crucial: Includes padding and border in the width */
 }
 
 .mindmap-title-editor .title-input:focus {
     border-color: var(--accent-blue);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 
 /* Responsive adjustments */
@@ -95,13 +95,13 @@
 
     .mindmap-title-editor .title-display,
     .mindmap-title-editor .title-input {
-        font-size: 1.1em;
-        /* Smaller font on smaller screens */
-        max-width: 180px;
+        font-size: 1.5em;
+        /* Adjusted for smaller screens */
+        max-width: 250px;
         /* Adjust max width */
-        width: 180px;
+        width: 250px;
         /* Ensure input matches */
-        padding: 4px 8px;
+        padding: 6px 10px;
     }
 }
 
@@ -113,11 +113,11 @@
 
     .mindmap-title-editor .title-display,
     .mindmap-title-editor .title-input {
-        font-size: 1em;
+        font-size: 1.3em;
         /* Even smaller font */
-        max-width: 140px;
-        width: 140px;
-        padding: 3px 6px;
+        max-width: 180px;
+        width: 180px;
+        padding: 5px 8px;
     }
 }
 

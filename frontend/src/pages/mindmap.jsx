@@ -1,17 +1,17 @@
-// mindmap.jsx
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 
 import MindMapCanvas from '../components/mindmapcanvas';
 import MindMapToolbar from '../components/mindmaptoolbar';
 import MindMapInstructions from '../components/mindmapinstructions';
 import LargeTextEditor from '../components/mindmaptexteditor';
-import MindMapTitleEditor from '../components/mindmaptitle';
+import MindMapTitleEditor from '../components/mindmaptitle'; // <-- IMPORT NEW COMPONENT
 import './mindmap.css';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_API_URL || 'http://localhost:5001/api';
 
-const MindMap = () => {
+// MindMap now receives session and onLogout from App.js via ProtectedRoute
+const MindMap = ({ session, onLogout }) => { // <--- ADD session, onLogout props
   const { id } = useParams();
   const navigate = useNavigate();
   const [nodes, setNodes] = useState([
@@ -33,7 +33,7 @@ const MindMap = () => {
 
   const svgRef = useRef(null);
   const containerRef = useRef(null);
-  const canvasWrapperRef = useRef(null);
+  const canvasWrapperRef = useRef(null); // Ref for the canvas wrapper
 
   const dragDataRef = useRef({ isDragging: false, offset: { x: 0, y: 0 } });
   const animationFrameRef = useRef(null);
@@ -43,57 +43,49 @@ const MindMap = () => {
   ], []);
 
   // --- State for Backend Integration ---
-  const [session, setSession] = useState(null);
+  // const [session, setSession] = useState(null); // REMOVED: session now comes from props
   const [currentMindMapId, setCurrentMindMapId] = useState(null);
   const [currentMapTitle, setCurrentMapTitle] = useState('Untitled Map');
-  const [userMindMaps, setUserMindMaps] = useState([]); // Still keeping this, just not used in toolbar
+  // const [userMindMaps, setUserMindMaps] = useState([]); // REMOVED: userMindMaps is no longer used here
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('Welcome! Login or register to start creating.');
 
   // --- Authentication & Session Management ---
-  const handleLogout = useCallback(() => {
-    setSession(null);
-    localStorage.removeItem('mindmapSession');
-    setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
-    setConnections([]);
-    setTranslateX(0);
-    setTranslateY(0);
-    setCurrentMindMapId(null);
-    setCurrentMapTitle('Untitled Map');
-    setUserMindMaps([]);
-    setMessage('You have been logged out.');
-    navigate('/');
-  }, [navigate]);
+  // handleLogout is now passed as a prop from App.js
+
+  // fetchUserMindMaps is no longer needed in MindMap.jsx after removing "Load Maps" from toolbar
+  // If it's still called (e.g., from saveMindMapToServer), its purpose needs re-evaluation.
+  // For now, removing its definition to clean up if not needed.
+  // If you need to refresh a list of maps elsewhere, you'll need this function
+  // or a similar mechanism in the component that manages the list (e.g., MindMapDashboard).
 
   const fetchUserMindMaps = useCallback(async (token) => {
+    // This function is still needed by saveMindMapToServer to refresh the dashboard list
+    // if a map is saved, even if not displayed in this component.
+    // However, since `userMindMaps` state was removed, this function now does nothing
+    // with its result. It's safe to keep it, but it doesn't affect `MindMap`'s state.
     setLoading(true);
-    // setMessage('Fetching your mind maps...'); // Can keep or remove this
     try {
       const response = await fetch(`${API_BASE_URL}/mindmaps`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
-
       if (!response.ok) {
         if (response.status === 401) {
           setMessage('Session expired or unauthorized. Please log in again.');
-          handleLogout();
+          onLogout();
           return;
         }
         throw new Error(`Error fetching mind maps: ${response.statusText}`);
       }
-
-      const data = await response.json();
-      setUserMindMaps(data);
-      // Removed: setMessage('Your mind maps loaded!'); // <--- REMOVED THIS LINE
+      // const data = await response.json(); // Data is fetched but not used
+      // setUserMindMaps(data); // Removed
     } catch (error) {
       console.error('Fetch mind maps error:', error);
       setMessage(`Failed to fetch mind maps: ${error.message}`);
     } finally {
       setLoading(false);
     }
-  }, [handleLogout]);
+  }, [onLogout]); // Dependencies remain onLogout
 
   const loadMindMapFromServer = useCallback(async (mapId) => {
     if (!session || !session.token) {
@@ -101,18 +93,17 @@ const MindMap = () => {
       return;
     }
     setLoading(true);
-    setMessage('Loading mind map...'); // Keeping this for feedback
+    setMessage('Loading mind map...');
     try {
       const response = await fetch(`${API_BASE_URL}/mindmaps/${mapId}`, {
-        headers: {
-          'Authorization': `Bearer ${session.token}`,
-        },
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${session.token}` },
       });
 
       if (!response.ok) {
         if (response.status === 401) {
           setMessage('Session expired or unauthorized. Please log in again.');
-          handleLogout();
+          onLogout();
           return;
         }
         throw new Error(`Error loading mind map: ${response.statusText}`);
@@ -125,14 +116,14 @@ const MindMap = () => {
       setTranslateY(data.viewState?.translateY || 0);
       setCurrentMindMapId(data._id);
       setCurrentMapTitle(data.title);
-      setMessage(`Mind map "${data.title}" loaded!`); // Keeping this, as it's specific to loading *a* map
+      setMessage(`Mind map "${data.title}" loaded!`);
     } catch (error) {
       console.error('Load mind map error:', error);
       setMessage(`Failed to load mind map: ${error.message}`);
     } finally {
       setLoading(false);
     }
-  }, [session, handleLogout]);
+  }, [session, onLogout]);
 
   const saveMindMapToServer = useCallback(async () => {
     if (!session || !session.token) {
@@ -174,7 +165,7 @@ const MindMap = () => {
       if (!response.ok) {
         if (response.status === 401) {
           setMessage('Session expired or unauthorized. Please log in again to save.');
-          handleLogout();
+          onLogout();
           return;
         }
         const errorData = await response.json();
@@ -185,14 +176,14 @@ const MindMap = () => {
       setCurrentMindMapId(savedMap._id);
       setCurrentMapTitle(savedMap.title);
       setMessage('Mind map saved successfully!');
-      fetchUserMindMaps(session.token);
+      // fetchUserMindMaps(session.token); // REMOVED: No longer need to refresh `userMindMaps` state here as it's not used
     } catch (error) {
       console.error('Save mind map error:', error);
       setMessage(`Error saving mind map: ${error.message}`);
     } finally {
       setLoading(false);
     }
-  }, [nodes, connections, translateX, translateY, currentMindMapId, currentMapTitle, session, fetchUserMindMaps, handleLogout]);
+  }, [nodes, connections, translateX, translateY, currentMindMapId, currentMapTitle, session, onLogout]); // `fetchUserMindMaps` removed from dependencies
 
   const handleNewMap = useCallback(() => {
     setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
@@ -201,7 +192,7 @@ const MindMap = () => {
     setTranslateY(0);
     setCurrentMindMapId(null);
     setCurrentMapTitle('Untitled Map');
-    // Removed: setMessage('Created a new, empty mind map.'); // <--- REMOVED THIS LINE
+    // setMessage('Created a new, empty mind map.'); // Removed this message
     navigate('/mindmap/new', { replace: true });
   }, [navigate]);
 
@@ -209,39 +200,19 @@ const MindMap = () => {
     setCurrentMapTitle(newTitle);
   }, []);
 
-  // On component mount, check session and load data
-  useEffect(() => {
-    const storedSession = localStorage.getItem('mindmapSession');
-    if (storedSession) {
-      try {
-        const parsedSession = JSON.parse(storedSession);
-        if (parsedSession && parsedSession.token && parsedSession.user) {
-          setSession(parsedSession);
-          fetchUserMindMaps(parsedSession.token);
-        } else {
-          localStorage.removeItem('mindmapSession');
-          navigate('/');
-        }
-      } catch (e) {
-        console.error("Failed to parse session from localStorage", e);
-        localStorage.removeItem('mindmapSession');
-        navigate('/');
-      }
-    } else {
-      navigate('/');
-    }
-  }, [navigate, fetchUserMindMaps]);
+  // Initial session loading logic is now handled in App.js via ProtectedRoute
+  // useEffect(() => { ... }, [navigate, fetchUserMindMaps]); // This useEffect is removed
 
   // Load map based on ID after session is established
   useEffect(() => {
-    if (!session) return;
+    if (!session) return; // Ensure session is available from props
     if (id && id !== 'new') {
       loadMindMapFromServer(id);
     } else if (id === 'new') {
       handleNewMap();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, id]);
+  }, [session, id, loadMindMapFromServer, handleNewMap]); // Added dependencies for useEffect
 
   // --- Mouse Handlers for Node Dragging ---
   const handleMouseMove = useCallback((e) => {
@@ -343,7 +314,7 @@ const MindMap = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    const canvasWrapper = canvasWrapperRef.current; // Capture ref value
+    const canvasWrapper = canvasWrapperRef.current; // Capture ref value for cleanup
     if (!container) return;
 
     const handleGlobalMove = (e) => {
@@ -371,7 +342,7 @@ const MindMap = () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (canvasWrapper) { // Use captured ref value here
+      if (canvasWrapper) { // Use captured ref value here for cleanup
         canvasWrapper.classList.remove('no-transition');
       }
     };
@@ -446,10 +417,8 @@ const MindMap = () => {
 
   const isRootSelected = selectedNode ? nodes.find(n => n.id === selectedNode)?.isRoot : false;
 
-  // If no session, navigate to login. ProtectedRoute should handle this, but as a fallback.
-  if (!session) {
-    return null;
-  }
+  // ProtectedRoute handles redirection if no session
+  // if (!session) { return null; } // REMOVED: ProtectedRoute handles this
 
   return (
     <div className="mindmap-container" ref={containerRef}>
@@ -460,12 +429,10 @@ const MindMap = () => {
         selectedNode={selectedNode}
         isRootSelected={isRootSelected}
         onSave={saveMindMapToServer}
-        // Removed onLoadMap and onNewMap props
-        // Removed userMindMaps and currentMindMapId props
         loading={loading}
         message={message}
-        onLogout={handleLogout}
-        userName={session?.user?.email || 'User'}
+        // onLogout={handleLogout} // REMOVED: Handled by AppHeader
+        // userName={session?.user?.email || 'User'} // REMOVED: Handled by AppHeader
       />
 
       {/* New Title Editor Component */}

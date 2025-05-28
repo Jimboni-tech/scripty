@@ -5,18 +5,18 @@
 
 /* Root Variables (Duplicated for convenience, but ideally would be in a global CSS file or shared) */
 :root {
-    --bg-dark: #0d0d0d;
-    --surface-dark: #1a1a1a;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-faded: #606060;
+    --bg-light: #f4f6f8;
+    --surface-light: #ffffff;
+    --border-light: #e0e0e0;
+    --text-dark-primary: #212121;
+    --text-dark-secondary: #6b7280;
+    --text-dark-faded: #a0a0a0;
 
-    --accent-blue: #3b82f6;
+    --accent-blue: #1890ff;
     /* Used for buttons, links */
-    --accent-green: #22c55e;
+    --accent-green: #52c41a;
     /* For success messages */
-    --accent-red: #ef4444;
+    --accent-red: #ff4d4f;
     /* For error messages */
 }
 
@@ -25,18 +25,18 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: var(--bg-dark);
-    /* Use dark background */
+    background-color: var(--bg-light);
+    /* Use light background */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
 }
 
 .auth-form {
-    background: var(--surface-dark);
+    background: var(--surface-light);
     padding: 40px;
     border-radius: 12px;
-    border: 1px solid var(--border-subtle);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -44,7 +44,7 @@
 
 .auth-form h2 {
     margin-bottom: 25px;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     font-size: 2em;
     font-weight: 600;
 }
@@ -57,7 +57,7 @@
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     font-weight: 500;
     font-size: 0.9em;
 }
@@ -65,11 +65,11 @@
 .form-group input {
     width: 100%;
     padding: 12px;
-    background: var(--bg-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     font-size: 1em;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     box-sizing: border-box;
     /* Include padding in width */
     outline: none;
@@ -78,11 +78,11 @@
 
 .form-group input:focus {
     border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
 }
 
 .form-group input::placeholder {
-    color: var(--text-faded);
+    color: var(--text-dark-faded);
 }
 
 .auth-button {
@@ -101,14 +101,14 @@
 }
 
 .auth-button:hover:not(:disabled) {
-    background-color: #2563eb;
+    background-color: color-mix(in srgb, var(--accent-blue) 85%, black);
     /* Darker blue on hover */
     transform: translateY(-1px);
 }
 
 .auth-button:active:not(:disabled) {
     transform: translateY(0);
-    background-color: #1d4ed8;
+    background-color: color-mix(in srgb, var(--accent-blue) 70%, black);
 }
 
 .auth-button:disabled {
@@ -127,22 +127,22 @@
 }
 
 .auth-message.success {
-    background-color: rgba(34, 197, 94, 0.15);
+    background-color: rgba(82, 196, 26, 0.15);
     /* Green with transparency */
     color: var(--accent-green);
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    border: 1px solid rgba(82, 196, 26, 0.3);
 }
 
 .auth-message.error {
-    background-color: rgba(239, 68, 68, 0.15);
+    background-color: rgba(255, 77, 79, 0.15);
     /* Red with transparency */
     color: var(--accent-red);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(255, 77, 79, 0.3);
 }
 
 .toggle-auth {
     margin-top: 25px;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     font-size: 0.9em;
 }
 

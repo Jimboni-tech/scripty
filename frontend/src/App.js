@@ -1,86 +1,100 @@
+// src/App.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 import MindMap from './pages/mindmap.jsx';
 import MindMapDashboard from './pages/mindmapdashboard.jsx';
-import Auth from './pages/auth.jsx'; // Assuming Auth.jsx is in the 'pages' directory
+import Auth from './pages/auth.jsx';
 import HomePage from './pages/homepage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AppHeader from './components/appheader.jsx';
 
-function App() {
-  // State to hold the session data (e.g., user info, token)
+// Create a new component to encapsulate App's core logic and hooks
+const AppContent = () => {
   const [session, setSession] = useState(null);
+  const navigate = useNavigate(); // Now safe to use, as AppContent is inside <Router>
+  const location = useLocation(); // Now safe to use
 
-  // Effect to load session from localStorage when the app starts
+  // Centralized session loading from localStorage
   useEffect(() => {
     try {
       const storedSession = localStorage.getItem('mindmapSession');
       if (storedSession) {
         const parsedSession = JSON.parse(storedSession);
-        // Basic validation: check if token and user exist in the parsed session
         if (parsedSession && parsedSession.token && parsedSession.user) {
           setSession(parsedSession);
         } else {
-          // If the stored session is invalid, clear it
           localStorage.removeItem('mindmapSession');
+          if (location.pathname !== '/') {
+            navigate('/');
+          }
+        }
+      } else {
+        if (location.pathname !== '/') {
+          navigate('/');
         }
       }
     } catch (e) {
       console.error("Failed to parse session from localStorage", e);
-      localStorage.removeItem('mindmapSession'); // Clear potentially corrupted data
+      localStorage.removeItem('mindmapSession');
+      if (location.pathname !== '/') {
+        navigate('/');
+      }
     }
-  }, []); // Run only once on component mount
+  }, [navigate, location.pathname]);
 
-  // ---
-  // A wrapper component for the Auth route to handle navigation after login
-  // ---
-  const AuthRouteWrapper = () => {
-    const navigate = useNavigate(); // useNavigate hook must be called inside a component within Router context
+  // Centralized authentication success handler
+  const handleAuthSuccess = useCallback((authData) => {
+    setSession(authData);
+    localStorage.setItem('mindmapSession', JSON.stringify(authData));
+    navigate('/dashboard');
+  }, [navigate]);
 
-    // This function will be passed to the Auth component as 'onAuthSuccess'
-    const handleAuthSuccess = useCallback((authData) => {
-      // Save the authentication data to local state
-      setSession(authData);
-      // Persist the session data to localStorage
-      localStorage.setItem('mindmapSession', JSON.stringify(authData));
-      // Navigate to the dashboard after successful authentication
-      navigate('/dashboard');
-    }, [navigate]); // navigate is a stable function, but useCallback depends on it
+  // Centralized logout handler
+  const handleLogout = useCallback(() => {
+    setSession(null);
+    localStorage.removeItem('mindmapSession');
+    navigate('/');
+  }, [navigate]);
 
-    // Render the Auth component, passing the handleAuthSuccess function
-    return <Auth onAuthSuccess={handleAuthSuccess} />;
-  };
+  // Determine if the header should be shown (not on the Auth page)
+  const showHeader = location.pathname !== '/';
 
   return (
-    <Router>
+    <>
+      {showHeader && <AppHeader session={session} onLogout={handleLogout} />}
+
       <Routes>
-        {/* Public Routes */}
-        {/* Use AuthRouteWrapper here to manage navigation after login */}
-        <Route path="/" element={<AuthRouteWrapper />} />
+        <Route path="/" element={<Auth onAuthSuccess={handleAuthSuccess} />} />
         <Route path="/home" element={<HomePage />} />
 
-        {/* Protected Routes */}
-        {/* These routes are wrapped by ProtectedRoute to ensure the user is logged in */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
-              <MindMapDashboard />
+            <ProtectedRoute session={session}>
+              <MindMapDashboard session={session} onLogout={handleLogout} /> {/* Pass session and onLogout */}
             </ProtectedRoute>
           }
         />
         <Route
           path="/mindmap/:id"
           element={
-            <ProtectedRoute>
-              <MindMap />
+            <ProtectedRoute session={session}>
+              <MindMap session={session} onLogout={handleLogout} /> {/* Pass session and onLogout */}
             </ProtectedRoute>
           }
         />
 
-        {/* Fallback for any unmatched routes - redirects to the login/auth page */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <AppContent /> {/* Render the new AppContent component here */}
     </Router>
   );
 }

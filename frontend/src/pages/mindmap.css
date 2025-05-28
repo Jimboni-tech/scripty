@@ -13,45 +13,45 @@ body {
     overflow: hidden;
     /* Prevent body scroll */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--bg-dark);
+    background-color: var(--bg-light);
     /* Ensure body background matches app */
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
 }
 
 :root {
-    --bg-dark: #0d0d0d;
-    --surface-dark: #1a1a1a;
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --text-primary: #f0f0f0;
-    --text-secondary: #a0a0a0;
-    --text-faded: #606060;
+    --bg-light: #f4f6f8;
+    --surface-light: #ffffff;
+    --border-light: #e0e0e0;
+    --text-dark-primary: #212121;
+    --text-dark-secondary: #6b7280;
+    --text-dark-faded: #a0a0a0;
 
-    --node-bg-light: #2c2c2c;
-    --node-root-bg-light: #3a3a3a;
+    --node-bg-default: #ffffff;
+    --node-bg-root: #f0f3f6;
     --node-border-radius: 8px;
     /* Defined here for consistency */
 
-    --accent-red: #ef4444;
-    --accent-orange: #f97316;
-    --accent-yellow: #eab308;
-    --accent-green: #22c55e;
-    --accent-blue: #3b82f6;
-    --accent-purple: #a855f7;
-    --accent-pink: #ec4899;
+    --accent-red: #ff4d4f;
+    --accent-orange: #faad14;
+    --accent-yellow: #fadb14;
+    --accent-green: #52c41a;
+    --accent-blue: #1890ff;
+    --accent-purple: #722ed1;
+    --accent-pink: #eb2f96;
 
-    --highlight-light: rgba(255, 255, 255, 0.1);
-    --highlight-strong: rgba(255, 255, 255, 0.15);
+    --highlight-hover: rgba(0, 0, 0, 0.04);
+    --highlight-active: rgba(0, 0, 0, 0.08);
 }
 
 .mindmap-container {
     width: 100%;
     height: 100vh;
-    background: var(--bg-dark);
+    background: var(--bg-light);
     position: relative;
     overflow: hidden;
     user-select: none;
     cursor: grab;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     /* Inherited by children */
     display: flex;
     /* To manage layout of toolbar/canvas/instructions */
@@ -71,13 +71,13 @@ body {
     right: 0;
     bottom: 0;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+        linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     /* Allows clicks to pass through */
     z-index: 0;
-    opacity: 0.25;
+    opacity: 0.7;
 }
 
 
@@ -101,20 +101,20 @@ body {
     position: fixed;
     top: 24px;
     right: 24px;
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
     padding: 18px 20px;
     max-width: 240px;
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     z-index: 10;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .instructions-title {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     margin: 0 0 12px 0;
     letter-spacing: -0.01em;
 }
@@ -155,7 +155,7 @@ body {
 }
 
 .connection-line {
-    stroke: rgba(255, 255, 255, 0.3);
+    stroke: rgba(0, 0, 0, 0.3);
     stroke-width: 1.5;
     fill: none;
     opacity: 1;
@@ -175,15 +175,15 @@ body {
 }
 
 .mindmap-node:hover {
-    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.05);
 }
 
 .node-selected {
     z-index: 100;
     box-shadow:
         0 0 0 2px var(--node-color, var(--accent-blue)),
-        0 0 0 5px rgba(255, 255, 255, 0.1),
-        0 4px 12px rgba(0, 0, 0, 0.3) !important;
+        0 0 0 5px rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 .node-dragging {
@@ -192,18 +192,18 @@ body {
     z-index: 1000;
     box-shadow:
         0 0 0 3px var(--node-color, var(--accent-blue)),
-        0 0 0 6px rgba(255, 255, 255, 0.15),
-        0 6px 20px rgba(0, 0, 0, 0.4) !important;
+        0 0 0 6px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
 .node-content {
-    background-color: var(--node-bg-light);
-    color: var(--text-primary);
+    background-color: var(--node-bg-default);
+    color: var(--text-dark-primary);
     font-weight: 500;
     text-align: center;
     position: relative;
-    border: 1px solid var(--border-subtle);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.15s ease;
     letter-spacing: -0.01em;
     display: flex;
@@ -214,17 +214,9 @@ body {
 }
 
 .node-root .node-content {
-    background-color: var(--node-root-bg-light);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-subtle);
-    /* The &::before rule from your original code should be handled if you are using SCSS/SASS.
-       For plain CSS, you might need to adjust or remove it if it's causing issues.
-       Assuming it refers to a specific pseudo-element that will be defined elsewhere
-       or is a copy-paste error from a preprocessor. Removing for plain CSS if undefined. */
-    /* &::before {
-        border-width: 3px;
-        opacity: 0.8;
-    } */
+    background-color: var(--node-bg-root);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-light);
 }
 
 .node-input {
@@ -242,11 +234,11 @@ body {
 }
 
 .node-input::placeholder {
-    color: var(--text-faded);
+    color: var(--text-dark-faded);
 }
 
 .node-input::selection {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive adjustments */

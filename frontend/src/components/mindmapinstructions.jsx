@@ -1,8 +1,10 @@
+// src/components/MindMapInstructions.jsx
 import React from 'react';
+import './mindmapinstructions.css'; // Assuming you have a CSS file for styling
 
 const MindMapInstructions = () => (
   <div className="mindmap-instructions">
-    <h3 className="instructions-title">Mind Map Controls</h3>
+    <h3 className="instructions-title">Script Controls</h3>
     <ul className="instructions-list">
       <li>Drag nodes to reposition</li>
       <li>Select & add connected nodes</li>

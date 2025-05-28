@@ -7,8 +7,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    /* Darker, more opaque overlay */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Lighter, more subtle overlay */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,13 +20,13 @@
 
 /* Editor content container */
 .large-text-editor-content {
-    background-color: var(--surface-dark);
-    /* Use surface-dark for the main background */
+    background-color: var(--surface-light);
+    /* Use surface-light for the main background */
     border-radius: 12px;
     /* Consistent rounded corners */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    /* Softer, larger shadow for dark theme */
-    border: 1px solid var(--border-subtle);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    /* Softer, larger shadow for light theme */
+    border: 1px solid var(--border-light);
     /* Subtle border for definition */
     width: 90%;
     /* Responsive width */
@@ -42,7 +42,7 @@
     /* Subtle slide-in effect */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     /* Ensure Inter font */
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     /* Default text color for the editor content */
 }
 
@@ -50,9 +50,9 @@
 .editor-header {
     padding: 18px 25px;
     /* More generous padding */
-    background-color: var(--surface-dark);
+    background-color: var(--surface-light);
     /* Same as content, or slightly different if preferred */
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-light);
     /* Consistent border style */
     display: flex;
     justify-content: space-between;
@@ -61,7 +61,7 @@
 
 .editor-header h3 {
     margin: 0;
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     /* Primary text color */
     font-size: 1.35rem;
     /* Slightly larger heading */
@@ -82,7 +82,7 @@
 .editor-body label {
     font-size: 0.95rem;
     /* Slightly larger label text */
-    color: var(--text-secondary);
+    color: var(--text-dark-secondary);
     /* Secondary text color for labels */
     margin-bottom: 5px;
     /* Space between label and input */
@@ -97,16 +97,16 @@
     /* Account for border */
     padding: 12px 15px;
     /* More padding inside inputs */
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--border-light);
     /* Subtle border for inputs */
     border-radius: 8px;
     /* Rounded input fields */
     font-size: 1rem;
     font-family: inherit;
     /* Inherit Inter font */
-    color: var(--text-primary);
+    color: var(--text-dark-primary);
     /* Primary text color for input content */
-    background-color: var(--node-bg-light);
+    background-color: var(--node-bg-default);
     /* Slightly different background for inputs */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
@@ -117,7 +117,7 @@
 
 .editor-title-input::placeholder,
 .editor-text-area::placeholder {
-    color: var(--text-faded);
+    color: var(--text-dark-faded);
     /* Faded text color for placeholders */
     opacity: 0.8;
     /* Slightly less opaque */
@@ -128,7 +128,7 @@
     outline: none;
     border-color: var(--accent-blue);
     /* Primary blue focus color */
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.25);
     /* Subtle glow using accent-blue's RGB */
 }
 
@@ -144,9 +144,9 @@
 /* Actions section (buttons) */
 .editor-actions {
     padding: 18px 25px;
-    border-top: 1px solid var(--border-subtle);
+    border-top: 1px solid var(--border-light);
     /* Consistent border style */
-    background-color: var(--surface-dark);
+    background-color: var(--surface-light);
     /* Consistent background */
     display: flex;
     justify-content: flex-end;
@@ -191,20 +191,20 @@
 }
 
 .cancel-button {
-    background-color: var(--border-subtle);
-    /* Subtle background for cancel */
-    color: var(--text-secondary);
+    background-color: var(--border-light);
+    /* Subtle background for cancel, light gray */
+    color: var(--text-dark-secondary);
     /* Secondary text color */
 }
 
 .cancel-button:hover {
-    background-color: color-mix(in srgb, var(--border-subtle) 85%, white);
+    background-color: color-mix(in srgb, var(--border-light) 85%, black);
     /* Slightly darker on hover */
     transform: translateY(-1px);
 }
 
 .cancel-button:active {
-    background-color: color-mix(in srgb, var(--border-subtle) 70%, white);
+    background-color: color-mix(in srgb, var(--border-light) 70%, black);
     /* Even darker on click */
     transform: translateY(0);
 }
@@ -261,4 +261,5 @@
     .save-button,
     .cancel-button {
         font-size: 0.95rem;
-    } }
+    }
+}

@@ -86,8 +86,8 @@ const MindMapDashboard = () => { // Removed props: session, onLogout, onSetDashb
 
   return (
     <div className="dashboard-container">
-      <h2>Your Mind Maps</h2>
-      <button onClick={handleNew}>+ New Mind Map</button>
+      <h2>Your Scripts</h2>
+      <button onClick={handleNew}>+ New Script</button>
       {loading ? (
         <p>Loading...</p>
       ) : mindMaps.length === 0 ? (
