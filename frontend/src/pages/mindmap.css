@@ -1,0 +1,518 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+
+    --bg-dark: #0d0d0d;
+    --surface-dark: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-faded: #606060;
+
+
+    --node-bg-light: #2c2c2c;
+
+    --node-root-bg-light: #3a3a3a;
+
+    --accent-red: #ef4444;
+    --accent-orange: #f97316;
+    --accent-yellow: #eab308;
+    --accent-green: #22c55e;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --accent-pink: #ec4899;
+
+
+    --highlight-light: rgba(255, 255, 255, 0.1);
+    --highlight-strong: rgba(255, 255, 255, 0.15);
+}
+
+.mindmap-container {
+    width: 100%;
+    height: 100vh;
+    background: var(--bg-dark);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    cursor: grab;
+    color: var(--text-primary);
+}
+
+.mindmap-container.panning {
+    cursor: grabbing;
+}
+
+
+
+.mindmap-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.25;
+}
+
+
+.mindmap-canvas-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+    transition: transform 0.05s ease-out;
+}
+
+.mindmap-canvas-wrapper.no-transition {
+    transition: none !important;
+}
+
+
+.mindmap-toolbar {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+.btn-icon {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+
+.btn-primary {
+    background-color: var(--highlight-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--highlight-strong);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+
+.btn-secondary {
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--highlight-light);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+
+.btn-danger {
+    color: var(--accent-red);
+}
+
+.btn-danger:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--accent-red);
+    transform: translateY(-1px);
+}
+
+
+.mindmap-instructions {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 18px 20px;
+    max-width: 240px;
+    color: var(--text-secondary);
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.instructions-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 12px 0;
+    letter-spacing: -0.01em;
+}
+
+.instructions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.instructions-list li {
+    padding: 2px 0;
+    position: relative;
+    padding-left: 10px;
+    opacity: 0.9;
+}
+
+.instructions-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+
+.mindmap-connections {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.connection-line {
+
+    stroke: rgba(255, 255, 255, 0.3); 
+    stroke-width: 1.5; 
+    fill: none; 
+    opacity: 1; 
+    transition: none; 
+
+
+}
+
+
+.mindmap-node {
+    position: absolute;
+
+    cursor: grab;
+    user-select: none;
+    z-index: 10;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+    will-change: transform;
+    overflow: hidden;
+}
+
+
+.mindmap-node:hover {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.05);
+
+}
+
+.node-selected {
+    z-index: 100;
+    box-shadow:
+        0 0 0 2px var(--node-color, var(--accent-blue)),
+        0 0 0 5px rgba(255, 255, 255, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.3) !important;
+
+}
+
+.node-dragging {
+    cursor: grabbing;
+    transition: none !important;
+
+    z-index: 1000;
+    box-shadow:
+        0 0 0 3px var(--node-color, var(--accent-blue)),
+        0 0 0 6px rgba(255, 255, 255, 0.15),
+        0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.node-content {
+    background-color: var(--node-bg-light);
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.15s ease;
+    letter-spacing: -0.01em;
+
+    display: flex;
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+.node-root .node-content {
+    background-color: var(--node-root-bg-light);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-subtle);
+
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before {
+        border-width: 3px;
+        opacity: 0.8;
+    }
+}
+
+.node-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    text-align: center;
+    width: 100%;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    caret-color: var(--accent-blue);
+    display: inline-block;
+}
+
+.node-input::placeholder {
+    color: var(--text-faded);
+}
+
+.node-input::selection {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mindmap-toolbar {
+        bottom: 20px;
+        padding: 8px 12px;
+        gap: 6px;
+        border-radius: 10px;
+    }
+
+    .mindmap-instructions {
+        top: 20px;
+        right: 20px;
+        padding: 16px 18px;
+        max-width: 200px;
+        border-radius: 10px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+        border-radius: 6px;
+    }
+
+    .btn-icon {
+        font-size: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mindmap-canvas-wrapper:not(.no-transition) {
+        transition: transform 0.05s ease-out;
+    }
+}
+
+
+.mindmap-node,
+.node-selected,
+.node-dragging {
+    border-radius: var(--node-border-radius, 8px);
+    overflow: hidden;
+}
+
+@media (prefers-contrast: high) {
+    .mindmap-container {
+        background: #000000;
+    }
+
+    .mindmap-toolbar,
+    .mindmap-instructions {
+        background: #000000;
+        border-color: #ffffff;
+    }
+
+    .connection-line {
+        stroke: #ffffff;
+        opacity: 1;
+    }
+
+    .node-content {
+        background: #333333;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .node-content::before {
+        display: none;
+    }
+
+    .node-root .node-content {
+        background: #444444;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .node-selected {
+        box-shadow: 0 0 0 3px #ffffff !important;
+    }
+
+    .node-dragging {
+        box-shadow: 0 0 0 4px #ffffff !important;
+    }
+
+    .btn {
+        background: #333333;
+        color: #ffffff;
+        border-color: #ffffff;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-danger:hover {
+        background: #555555;
+    }
+
+    .btn-danger {
+        background: #cc0000;
+        color: #ffffff;
+        border-color: #ff0000;
+    }
+}
+
+.large-text-editor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.large-text-editor-content {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transform: scale(0.95);
+    opacity: 0;
+    animation: fadeInScaleUp 0.2s forwards ease-out;
+}
+
+@keyframes fadeInScaleUp {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.large-text-editor-textarea {
+    width: 100%;
+    height: 200px;
+
+    background: var(--bg-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    resize: vertical;
+
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.large-text-editor-textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.large-text-editor-textarea::placeholder {
+    color: var(--text-faded);
+}
+
+.large-text-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.user-info {
+    margin-left: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-weight: 500;
+    padding: 0 8px;
+}
+
+.logout-btn {
+    margin-left: auto;
+}
