@@ -1,0 +1,218 @@
+/* src/components/auth.css */
+
+/* Import Google Font (already imported in mindmap.css, but good for standalone components) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Root Variables (Duplicated for convenience, but ideally would be in a global CSS file or shared) */
+:root {
+    --bg-dark: #0d0d0d;
+    --surface-dark: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-faded: #606060;
+
+    --accent-blue: #3b82f6;
+    /* Used for buttons, links */
+    --accent-green: #22c55e;
+    /* For success messages */
+    --accent-red: #ef4444;
+    /* For error messages */
+}
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    /* Use dark background */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-primary);
+}
+
+.auth-form {
+    background: var(--surface-dark);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-form h2 {
+    margin-bottom: 25px;
+    color: var(--text-primary);
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--text-primary);
+    box-sizing: border-box;
+    /* Include padding in width */
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.form-group input::placeholder {
+    color: var(--text-faded);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--accent-blue);
+    /* Primary blue */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-top: 15px;
+}
+
+.auth-button:hover:not(:disabled) {
+    background-color: #2563eb;
+    /* Darker blue on hover */
+    transform: translateY(-1px);
+}
+
+.auth-button:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: #1d4ed8;
+}
+
+.auth-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.auth-message {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95em;
+    text-align: left;
+}
+
+.auth-message.success {
+    background-color: rgba(34, 197, 94, 0.15);
+    /* Green with transparency */
+    color: var(--accent-green);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.auth-message.error {
+    background-color: rgba(239, 68, 68, 0.15);
+    /* Red with transparency */
+    color: var(--accent-red);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.toggle-auth {
+    margin-top: 25px;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.toggle-auth span {
+    color: var(--accent-blue);
+    cursor: pointer;
+    font-weight: 600;
+    transition: text-decoration 0.2s ease;
+}
+
+.toggle-auth span:hover {
+    text-decoration: underline;
+}
+
+/* High contrast adjustments */
+@media (prefers-contrast: high) {
+    .auth-container {
+        background: #000000;
+    }
+
+    .auth-form {
+        background: #000000;
+        border-color: #ffffff;
+    }
+
+    .auth-form h2 {
+        color: #ffffff;
+    }
+
+    .form-group label {
+        color: #ffffff;
+    }
+
+    .form-group input {
+        background: #333333;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .form-group input:focus {
+        box-shadow: 0 0 0 3px #ffffff;
+    }
+
+    .auth-button {
+        background-color: #0000cc;
+        color: #ffffff;
+        border-color: #ffffff;
+    }
+
+    .auth-button:hover:not(:disabled) {
+        background-color: #0000ff;
+    }
+
+    .auth-message.success {
+        background-color: #006600;
+        color: #ffffff;
+        border-color: #00ff00;
+    }
+
+    .auth-message.error {
+        background-color: #cc0000;
+        color: #ffffff;
+        border-color: #ff0000;
+    }
+
+    .toggle-auth {
+        color: #ffffff;
+    }
+
+    .toggle-auth span {
+        color: #ffffff;
+    }
+}

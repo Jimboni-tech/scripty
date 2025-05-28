@@ -1,0 +1,552 @@
+/* src/mindmaptoolbar.css */
+
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Root Variables (Duplicated for convenience, but ideally would be in a global CSS file or shared) */
+:root {
+    --bg-dark: #0d0d0d;
+    --surface-dark: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-faded: #606060;
+
+    --accent-red: #ef4444;
+    --accent-orange: #f97316;
+    --accent-yellow: #eab308;
+    --accent-green: #22c55e;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --accent-pink: #ec4899;
+
+    --highlight-light: rgba(255, 255, 255, 0.1);
+    --highlight-strong: rgba(255, 255, 255, 0.15);
+}
+
+.mindmap-toolbar-wrapper {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    /* Space between toolbar and message */
+}
+
+.mindmap-toolbar {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    /* Gap between sections */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Gap between buttons within a section */
+}
+
+.toolbar-section:not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-subtle);
+    margin-left: 8px;
+    /* Space after the separator */
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-icon {
+    font-size: 14px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+}
+
+.btn-primary {
+    background-color: var(--highlight-light);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--highlight-strong);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn-secondary {
+    /* Re-added for MindMapToolbar */
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    /* Re-added for MindMapToolbar */
+    background-color: var(--highlight-light);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    color: var(--accent-red);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--accent-red);
+    transform: translateY(-1px);
+}
+
+.btn-info {
+    /* Re-added for Load button */
+    background-color: var(--highlight-light);
+}
+
+.btn-info:hover:not(:disabled) {
+    /* Re-added for Load button */
+    background-color: var(--highlight-strong);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    /* Re-added for New button */
+    background-color: var(--accent-green);
+    color: #fff;
+}
+
+.btn-success:hover:not(:disabled) {
+    /* Re-added for New button */
+    background-color: #16a34a;
+    /* Darker green */
+    transform: translateY(-1px);
+}
+
+.btn-warning {
+    /* Re-added for Logout button */
+    background-color: var(--accent-orange);
+    color: #fff;
+}
+
+.btn-warning:hover:not(:disabled) {
+    /* Re-added for Logout button */
+    background-color: #ea580c;
+    /* Darker orange */
+    transform: translateY(-1px);
+}
+
+/* Dropdown specific styles */
+.dropdown-container {
+    /* Re-added */
+    position: relative;
+}
+
+.dropdown-arrow {
+    /* Re-added */
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.dropdown-menu {
+    /* Re-added */
+    position: absolute;
+    bottom: calc(100% + 8px);
+    /* Position above the button */
+    left: 0;
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 180px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 11;
+    transform-origin: bottom;
+    animation: slideUpAndFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes slideUpAndFadeIn {
+
+    /* Re-added */
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    /* Re-added */
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    color: var(--text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-item small {
+    /* Re-added */
+    display: block;
+    font-size: 0.75em;
+    color: var(--text-secondary);
+}
+
+.dropdown-item:hover {
+    /* Re-added */
+    background-color: var(--highlight-light);
+}
+
+.dropdown-item.active {
+    /* Re-added */
+    background-color: var(--accent-blue);
+    color: #fff;
+}
+
+.dropdown-item.active small {
+    /* Re-added */
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dropdown-item.no-maps {
+    /* Re-added */
+    color: var(--text-faded);
+    text-align: center;
+    cursor: default;
+    padding: 12px 16px;
+    font-style: italic;
+}
+
+.dropdown-item.no-maps:hover {
+    /* Re-added */
+    background-color: transparent;
+}
+
+.dropdown-footer {
+    /* Re-added */
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 8px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.btn-close-dropdown {
+    /* Re-added */
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s ease;
+}
+
+.btn-close-dropdown:hover {
+    /* Re-added */
+    color: var(--text-primary);
+}
+
+
+/* Current Map Info section */
+.current-map-info {
+    /* Re-added and original styles */
+    flex-grow: 1;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+.map-title-display {
+    /* Re-added and original styles */
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.map-title-display:hover {
+    /* Re-added and original styles */
+    background-color: var(--highlight-light);
+}
+
+.map-title-input {
+    /* Re-added and original styles */
+    background: var(--bg-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    outline: none;
+    text-align: center;
+    width: 180px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.map-title-input:focus {
+    /* Re-added and original styles */
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+
+/* User Info & Logout */
+.user-info {
+    /* Re-added and original styles */
+    margin-left: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-weight: 500;
+    padding: 0 8px;
+}
+
+.user-name {
+    /* Re-added and original styles */
+    margin-right: 8px;
+    color: var(--text-secondary);
+}
+
+.toolbar-message {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    min-width: 250px;
+    text-align: center;
+    opacity: 0.9;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.toolbar-message.loading {
+    color: var(--accent-blue);
+    font-weight: 500;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mindmap-toolbar-wrapper {
+        bottom: 20px;
+    }
+
+    .mindmap-toolbar {
+        padding: 8px 12px;
+        gap: 6px;
+        border-radius: 10px;
+        flex-wrap: wrap;
+        /* Allow wrapping on smaller screens */
+        justify-content: center;
+    }
+
+    .toolbar-section:not(:last-child)::after {
+        height: 18px;
+        margin-left: 6px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 4px;
+        border-radius: 6px;
+    }
+
+    .btn-icon {
+        font-size: 13px;
+    }
+
+    .dropdown-menu {
+        min-width: unset;
+        width: 100%;
+        left: 0;
+        right: 0;
+    }
+
+    .map-title-input {
+        width: 100px;
+    }
+
+    .user-info {
+        margin-left: 8px;
+        font-size: 11px;
+    }
+
+    .toolbar-message {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mindmap-toolbar {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mindmap-toolbar-wrapper {
+        transition: transform 0.2s ease;
+    }
+}
+
+/* High contrast adjustments for toolbar (if needed) */
+@media (prefers-contrast: high) {
+    .mindmap-toolbar {
+        background: #000000;
+        border-color: #ffffff;
+    }
+
+    .toolbar-section:not(:last-child)::after {
+        background-color: #ffffff;
+    }
+
+    .btn {
+        background: #333333;
+        color: #ffffff;
+        border-color: #ffffff;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-info:hover {
+        background: #555555;
+    }
+
+    .btn-danger {
+        background: #cc0000;
+        color: #ffffff;
+        border-color: #ff0000;
+    }
+
+    .btn-danger:hover {
+        background: #ff3333;
+    }
+
+    .btn-success {
+        background: #006600;
+        color: #ffffff;
+        border-color: #00ff00;
+    }
+
+    .btn-success:hover {
+        background: #009900;
+    }
+
+    .btn-warning {
+        background: #993300;
+        color: #ffffff;
+        border-color: #ff6600;
+    }
+
+    .btn-warning:hover {
+        background: #cc4400;
+    }
+
+    .dropdown-menu {
+        background: #000000;
+        border-color: #ffffff;
+    }
+
+    .dropdown-item:hover {
+        background-color: #333333;
+    }
+
+    .dropdown-item.active {
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+    .dropdown-item.active small {
+        color: #333333;
+    }
+
+    .map-title-input {
+        background: #000000;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .map-title-input:focus {
+        box-shadow: 0 0 0 3px #ffffff;
+    }
+
+    .toolbar-message {
+        background: #000000;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+
+    .toolbar-message.loading {
+        color: #ffffff;
+    }
+}

@@ -1,0 +1,294 @@
+/* src/pages/MindMapDashboard.css */
+
+/* Import the same font as mindmap.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Define the same root variables for consistency */
+:root {
+    --bg-dark: #0d0d0d;
+    --surface-dark: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-faded: #606060;
+
+    --node-bg-light: #2c2c2c;
+    --node-root-bg-light: #3a3a3a;
+    --node-border-radius: 8px;
+
+    --accent-red: #ef4444;
+    --accent-orange: #f97316;
+    --accent-yellow: #eab308;
+    --accent-green: #22c55e;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --accent-pink: #ec4899;
+
+    --highlight-light: rgba(255, 255, 255, 0.1);
+    --highlight-strong: rgba(255, 255, 255, 0.15);
+}
+
+body {
+    /* Ensure body background matches the app's dark theme */
+    background-color: var(--bg-dark);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: var(--bg-dark);
+    /* Use the same dark background */
+    min-height: 100vh;
+    /* Full viewport height */
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+.dashboard-container h2 {
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: -0.02em;
+}
+
+.dashboard-container button {
+    background-color: var(--accent-blue);
+    /* Use an accent color for buttons */
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    border-radius: var(--node-border-radius);
+    /* Consistent border-radius */
+    cursor: pointer;
+    font-size: 1.15em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-bottom: 40px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.01em;
+}
+
+.dashboard-container button:hover {
+    background-color: #2a6ed1;
+    /* Slightly darker blue on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dashboard-container button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-container p {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    margin-top: 15px;
+    text-align: center;
+}
+
+.dashboard-container ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    max-width: 700px;
+    /* Wider list for more content */
+}
+
+.dashboard-container li {
+    background-color: var(--surface-dark);
+    /* Use surface dark for list items */
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--node-border-radius);
+    margin-bottom: 20px;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.dashboard-container li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background-color: #222;
+    /* Slightly lighter surface on hover */
+}
+
+.dashboard-container li span {
+    font-size: 1.3em;
+    color: var(--text-primary);
+    flex-grow: 1;
+    margin-right: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+.dashboard-container li button {
+    padding: 10px 22px;
+    background-color: var(--accent-green);
+    /* Different accent color for "Open" */
+    font-size: 1em;
+    border-radius: 6px;
+    margin-bottom: 0;
+    /* Override global button margin */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    /* Smaller shadow */
+}
+
+.dashboard-container li button:hover {
+    background-color: #1e9e4f;
+    /* Darker green on hover */
+    transform: translateY(-2px);
+    /* Subtle lift */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-container li button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Message styling */
+.dashboard-container>div {
+    /* Targets the message div directly under container */
+    margin-top: 25px;
+    padding: 15px 25px;
+    border-radius: var(--node-border-radius);
+    background-color: var(--highlight-light);
+    /* Use a subtle highlight background */
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-subtle);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 25px 15px;
+    }
+
+    .dashboard-container h2 {
+        font-size: 2em;
+        margin-bottom: 25px;
+    }
+
+    .dashboard-container button {
+        padding: 12px 25px;
+        font-size: 1.05em;
+        margin-bottom: 30px;
+    }
+
+    .dashboard-container li {
+        flex-direction: column;
+        /* Stack title and button on small screens */
+        align-items: flex-start;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-container li span {
+        margin-bottom: 12px;
+        margin-right: 0;
+        font-size: 1.15em;
+    }
+
+    .dashboard-container li button {
+        width: 100%;
+        /* Make button full width on small screens */
+        text-align: center;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container h2 {
+        font-size: 1.7em;
+    }
+
+    .dashboard-container button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+
+    .dashboard-container li span {
+        font-size: 1em;
+    }
+}
+
+/* High contrast adjustments (inheriting from mindmap.css) */
+@media (prefers-contrast: high) {
+    .dashboard-container {
+        background: #000000;
+        color: #ffffff;
+    }
+
+    .dashboard-container h2 {
+        color: #ffffff;
+    }
+
+    .dashboard-container button {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #ffffff;
+        box-shadow: none;
+    }
+
+    .dashboard-container button:hover {
+        background-color: #cccccc;
+        color: #000000;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .dashboard-container li {
+        background-color: #333333;
+        border-color: #ffffff;
+        box-shadow: none;
+    }
+
+    .dashboard-container li:hover {
+        background-color: #444444;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .dashboard-container li span {
+        color: #ffffff;
+    }
+
+    .dashboard-container li button {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #ffffff;
+    }
+
+    .dashboard-container li button:hover {
+        background-color: #cccccc;
+        color: #000000;
+        transform: none;
+    }
+
+    .dashboard-container>div {
+        background-color: #000000;
+        border-color: #ffffff;
+        color: #ffffff;
+    }
+}

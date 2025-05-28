@@ -1,0 +1,140 @@
+/* src/components/mindmaptitleeditor.css */
+
+/* Important: Ensure these variables are accessible, e.g., by importing mindmap.css globally
+   or by re-defining them here if this component is truly standalone */
+:root {
+    --bg-dark: #0d0d0d;
+    --surface-dark: #1a1a1a;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-faded: #606060;
+    --accent-blue: #3b82f6;
+    /* For caret and highlight */
+}
+
+.mindmap-title-editor {
+    position: absolute;
+    top: 16px;
+    /* Reduced from 24px */
+    left: 16px;
+    /* Reduced from 24px */
+    z-index: 20;
+    background: transparent;
+    padding: 0;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Added min-width to ensure clickability if title is very short */
+    min-width: 100px;
+}
+
+.mindmap-title-editor:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    /* Subtle hover background */
+}
+
+.mindmap-title-editor .title-display {
+    font-size: 1.3em;
+    /* Reduced from 1.8em */
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: text;
+    padding: 6px 10px;
+    /* Reduced from 8px 12px */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    /* Reduced from 350px - adjust as needed */
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    border-radius: 6px;
+}
+
+.mindmap-title-editor .title-display:hover {
+    color: var(--accent-blue);
+}
+
+.mindmap-title-editor .title-input {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 6px 10px;
+    /* Reduced from 8px 12px */
+    font-size: 1.3em;
+    /* Reduced from 1.8em */
+    font-weight: 700;
+    color: var(--text-primary);
+    width: 250px;
+    /* Explicitly set width to match max-width of display */
+    /* Removed max-width to avoid conflict; width is now fixed */
+    outline: none;
+    caret-color: var(--accent-blue);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    /* Crucial: Includes padding and border in the width */
+}
+
+.mindmap-title-editor .title-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mindmap-title-editor {
+        top: 10px;
+        /* Further reduced */
+        left: 10px;
+        /* Further reduced */
+    }
+
+    .mindmap-title-editor .title-display,
+    .mindmap-title-editor .title-input {
+        font-size: 1.1em;
+        /* Smaller font on smaller screens */
+        max-width: 180px;
+        /* Adjust max width */
+        width: 180px;
+        /* Ensure input matches */
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mindmap-title-editor {
+        top: 8px;
+        left: 8px;
+    }
+
+    .mindmap-title-editor .title-display,
+    .mindmap-title-editor .title-input {
+        font-size: 1em;
+        /* Even smaller font */
+        max-width: 140px;
+        width: 140px;
+        padding: 3px 6px;
+    }
+}
+
+/* High contrast adjustments */
+@media (prefers-contrast: high) {
+
+    .mindmap-title-editor .title-display,
+    .mindmap-title-editor .title-input {
+        color: #ffffff;
+    }
+
+    .mindmap-title-editor .title-input {
+        background: #000000;
+        border-color: #ffffff;
+    }
+
+    .mindmap-title-editor .title-input:focus {
+        box-shadow: 0 0 0 2px #ffffff;
+    }
+}

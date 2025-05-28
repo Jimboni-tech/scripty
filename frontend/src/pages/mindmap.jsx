@@ -1,27 +1,19 @@
+// mindmap.jsx
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { createClient } from '@supabase/supabase-js';
+
 import MindMapCanvas from '../components/mindmapcanvas';
 import MindMapToolbar from '../components/mindmaptoolbar';
 import MindMapInstructions from '../components/mindmapinstructions';
 import LargeTextEditor from '../components/mindmaptexteditor';
-import Auth from '../components/Auth';
-
+import MindMapTitleEditor from '../components/mindmaptitle';
 import './mindmap.css';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('REACT_APP_SUPABASE_URL or REACT_APP_SUPABASE_ANON_KEY is missing in frontend .env file.');
-}
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-const API_BASE_URL = process.env.REACT_APP_BACKEND_API_URL;
-if (!API_BASE_URL) {
-  console.error('REACT_APP_BACKEND_API_URL is not defined in frontend .env file. API calls will fail.');
-}
+const API_BASE_URL = process.env.REACT_APP_BACKEND_API_URL || 'http://localhost:5001/api';
 
 const MindMap = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [nodes, setNodes] = useState([
     { id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }
   ]);
@@ -32,7 +24,7 @@ const MindMap = () => {
   const [isLargeEditorOpen, setIsLargeEditorOpen] = useState(false);
   const [largeEditorNodeId, setLargeEditorNodeId] = useState(null);
   const [largeEditorTitle, setLargeEditorTitle] = useState('');
-  const [largeEditorText, setLargeEditorText] = '';
+  const [largeEditorText, setLargeEditorText] = useState('');
 
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
@@ -47,200 +39,211 @@ const MindMap = () => {
   const animationFrameRef = useRef(null);
 
   const colors = useMemo(() => [
-    '#EF4444',
-    '#F97316',
-    '#EAB308',
-    '#22C55E',
-    '#3B82F6',
-    '#A855F7',
-    '#EC4899',
+    '#EF4444', '#F97316', '#EAB308', '#22C55E', '#3B82F6', '#A855F7', '#EC4899',
   ], []);
 
+  // --- State for Backend Integration ---
   const [session, setSession] = useState(null);
-  const [mindmapId, setMindmapId] = useState(null);
+  const [currentMindMapId, setCurrentMindMapId] = useState(null);
+  const [currentMapTitle, setCurrentMapTitle] = useState('Untitled Map');
+  const [userMindMaps, setUserMindMaps] = useState([]); // Still keeping this, just not used in toolbar
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [initialLoadAttempted, setInitialLoadAttempted] = useState(false);
+  const [message, setMessage] = useState('Welcome! Login or register to start creating.');
 
-  const saveMindMap = useCallback(async () => {
-    if (!session || !session.access_token) {
-      setMessage('You must be logged in to save your mind map. Please log in.');
+  // --- Authentication & Session Management ---
+  const handleLogout = useCallback(() => {
+    setSession(null);
+    localStorage.removeItem('mindmapSession');
+    setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
+    setConnections([]);
+    setTranslateX(0);
+    setTranslateY(0);
+    setCurrentMindMapId(null);
+    setCurrentMapTitle('Untitled Map');
+    setUserMindMaps([]);
+    setMessage('You have been logged out.');
+    navigate('/');
+  }, [navigate]);
+
+  const fetchUserMindMaps = useCallback(async (token) => {
+    setLoading(true);
+    // setMessage('Fetching your mind maps...'); // Can keep or remove this
+    try {
+      const response = await fetch(`${API_BASE_URL}/mindmaps`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setMessage('Session expired or unauthorized. Please log in again.');
+          handleLogout();
+          return;
+        }
+        throw new Error(`Error fetching mind maps: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setUserMindMaps(data);
+      // Removed: setMessage('Your mind maps loaded!'); // <--- REMOVED THIS LINE
+    } catch (error) {
+      console.error('Fetch mind maps error:', error);
+      setMessage(`Failed to fetch mind maps: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, [handleLogout]);
+
+  const loadMindMapFromServer = useCallback(async (mapId) => {
+    if (!session || !session.token) {
+      setMessage('Please log in to load a mind map.');
       return;
     }
-    if (loading) {
-        setMessage('Save in progress...');
-        return;
+    setLoading(true);
+    setMessage('Loading mind map...'); // Keeping this for feedback
+    try {
+      const response = await fetch(`${API_BASE_URL}/mindmaps/${mapId}`, {
+        headers: {
+          'Authorization': `Bearer ${session.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setMessage('Session expired or unauthorized. Please log in again.');
+          handleLogout();
+          return;
+        }
+        throw new Error(`Error loading mind map: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setNodes(data.nodes || []);
+      setConnections(data.connections || []);
+      setTranslateX(data.viewState?.translateX || 0);
+      setTranslateY(data.viewState?.translateY || 0);
+      setCurrentMindMapId(data._id);
+      setCurrentMapTitle(data.title);
+      setMessage(`Mind map "${data.title}" loaded!`); // Keeping this, as it's specific to loading *a* map
+    } catch (error) {
+      console.error('Load mind map error:', error);
+      setMessage(`Failed to load mind map: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, [session, handleLogout]);
+
+  const saveMindMapToServer = useCallback(async () => {
+    if (!session || !session.token) {
+      setMessage('Please log in to save your mind map.');
+      return;
     }
 
     setLoading(true);
     setMessage('Saving mind map...');
-
-    const mindMapData = {
-      mindmapId,
-      name: 'My Awesome Mind Map',
-      nodes_data: nodes,
-      connections_data: connections,
-      translate_x: translateX,
-      translate_y: translateY,
-    };
-
     try {
-      const response = await fetch(`${API_BASE_URL}/mindmaps`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(mindMapData),
-      });
+      const mindMapData = {
+        title: currentMapTitle,
+        nodes,
+        connections,
+        viewState: { translateX, translateY },
+      };
 
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (parseError) {
-          console.error('Failed to parse error response during save:', parseError);
-          setMessage(`Error saving mind map: Server responded with status ${response.status} but no valid JSON error message.`);
-          return;
-        }
-        const errorMessage = errorData.message || errorData.error || `Unknown error (Status: ${response.status})`;
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
-      setMindmapId(result.data.id);
-      setMessage('Mind map saved successfully!');
-      console.log('Mind map saved:', result.data);
-
-    } catch (error) {
-      setMessage(`Error saving mind map: ${error.message}.`);
-      console.error('Error saving mind map:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [session, nodes, connections, translateX, translateY, mindmapId, loading]);
-
-  const loadMindMap = useCallback(async () => {
-    if (!session || !session.access_token) {
-      setMessage('Please log in to load your mind map.');
-      setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
-      setConnections([]);
-      setTranslateX(0);
-      setTranslateY(0);
-      setMindmapId(null);
-      return;
-    }
-    if (loading) {
-        setMessage('Load in progress...');
-        return;
-    }
-
-    setLoading(true);
-    setMessage('Loading mind map...');
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/mindmaps`, {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          setMessage('No mind map found for this user. You can start creating one now!');
-          setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
-          setConnections([]);
-          setTranslateX(0);
-          setTranslateY(0);
-          setMindmapId(null);
-          return;
-        }
-
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (parseError) {
-          console.error('Failed to parse error response during load:', parseError);
-          setMessage(`Error loading mind map: Server responded with status ${response.status} but no valid JSON error message.`);
-          return;
-        }
-        const errorMessage = errorData.message || errorData.error || `Unknown error (Status: ${response.status})`;
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
-      const loadedMap = result.data;
-      setNodes(loadedMap.nodes_data);
-      setConnections(loadedMap.connections_data);
-      setTranslateX(loadedMap.translate_x);
-      setTranslateY(loadedMap.translate_y);
-      setMindmapId(loadedMap.id);
-      setMessage('Mind map loaded successfully!');
-      console.log('Mind map loaded:', loadedMap);
-
-    } catch (error) {
-      setMessage(`Error loading mind map: ${error.message}. Please try again or re-authenticate.`);
-      console.error('Error loading mind map:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [session, loading]);
-
-  useEffect(() => {
-    const handleAuthEvent = async (event, currentSession) => {
-      console.log('Auth Event:', event, 'Session:', currentSession);
-      setSession(currentSession);
-
-      if (currentSession) {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || !initialLoadAttempted) {
-          setMessage('Logged in. Loading your mind map...');
-          await loadMindMap();
-          setInitialLoadAttempted(true);
-        } else {
-            setMessage('You are logged in.');
-        }
+      let response;
+      if (currentMindMapId) {
+        response = await fetch(`${API_BASE_URL}/mindmaps/${currentMindMapId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.token}`,
+          },
+          body: JSON.stringify(mindMapData),
+        });
       } else {
-        setMessage('Logged out. Please log in or sign up.');
-        setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
-        setConnections([]);
-        setTranslateX(0);
-        setTranslateY(0);
-        setMindmapId(null);
-        setInitialLoadAttempted(false);
+        response = await fetch(`${API_BASE_URL}/mindmaps`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.token}`,
+          },
+          body: JSON.stringify(mindMapData),
+        });
       }
-    };
 
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      handleAuthEvent('INITIAL_LOAD', initialSession);
-    });
+      if (!response.ok) {
+        if (response.status === 401) {
+          setMessage('Session expired or unauthorized. Please log in again to save.');
+          handleLogout();
+          return;
+        }
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save mind map');
+      }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthEvent);
-
-    return () => subscription.unsubscribe();
-  }, [loadMindMap, initialLoadAttempted]);
-
-  const handleAuthSuccess = useCallback(async (newSession) => {
-    setMessage('Authentication successful. Loading your mind map...');
-    setSession(newSession);
-    await loadMindMap();
-    setInitialLoadAttempted(true);
-  }, [loadMindMap]);
-
-  const handleLogout = useCallback(async () => {
-    setLoading(true);
-    setMessage('Logging out...');
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      setMessage('Logged out successfully.');
+      const savedMap = await response.json();
+      setCurrentMindMapId(savedMap._id);
+      setCurrentMapTitle(savedMap.title);
+      setMessage('Mind map saved successfully!');
+      fetchUserMindMaps(session.token);
     } catch (error) {
-      setMessage(`Logout error: ${error.message}`);
-      console.error('Logout error:', error);
+      console.error('Save mind map error:', error);
+      setMessage(`Error saving mind map: ${error.message}`);
     } finally {
       setLoading(false);
     }
+  }, [nodes, connections, translateX, translateY, currentMindMapId, currentMapTitle, session, fetchUserMindMaps, handleLogout]);
+
+  const handleNewMap = useCallback(() => {
+    setNodes([{ id: '1', x: 400, y: 300, title: 'Central Idea', text: '', isRoot: true, color: '#dc2626' }]);
+    setConnections([]);
+    setTranslateX(0);
+    setTranslateY(0);
+    setCurrentMindMapId(null);
+    setCurrentMapTitle('Untitled Map');
+    // Removed: setMessage('Created a new, empty mind map.'); // <--- REMOVED THIS LINE
+    navigate('/mindmap/new', { replace: true });
+  }, [navigate]);
+
+  const handleSetMapTitle = useCallback((newTitle) => {
+    setCurrentMapTitle(newTitle);
   }, []);
 
+  // On component mount, check session and load data
+  useEffect(() => {
+    const storedSession = localStorage.getItem('mindmapSession');
+    if (storedSession) {
+      try {
+        const parsedSession = JSON.parse(storedSession);
+        if (parsedSession && parsedSession.token && parsedSession.user) {
+          setSession(parsedSession);
+          fetchUserMindMaps(parsedSession.token);
+        } else {
+          localStorage.removeItem('mindmapSession');
+          navigate('/');
+        }
+      } catch (e) {
+        console.error("Failed to parse session from localStorage", e);
+        localStorage.removeItem('mindmapSession');
+        navigate('/');
+      }
+    } else {
+      navigate('/');
+    }
+  }, [navigate, fetchUserMindMaps]);
+
+  // Load map based on ID after session is established
+  useEffect(() => {
+    if (!session) return;
+    if (id && id !== 'new') {
+      loadMindMapFromServer(id);
+    } else if (id === 'new') {
+      handleNewMap();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, id]);
+
+  // --- Mouse Handlers for Node Dragging ---
   const handleMouseMove = useCallback((e) => {
     if (!dragDataRef.current.isDragging || !draggedNode) return;
     if (animationFrameRef.current) {
@@ -306,7 +309,8 @@ const MindMap = () => {
     const isTargetToolbar = e.target.closest('.mindmap-toolbar');
     const isTargetInstructions = e.target.closest('.mindmap-instructions');
     const isTargetLargeEditor = e.target.closest('.large-text-editor-overlay');
-    if (isTargetNode || isTargetToolbar || isTargetInstructions || isTargetLargeEditor || e.button !== 0) {
+    const isTargetTitleEditor = e.target.closest('.mindmap-title-editor');
+    if (isTargetNode || isTargetToolbar || isTargetInstructions || isTargetLargeEditor || isTargetTitleEditor || e.button !== 0) {
         return;
     }
     setIsPanning(true);
@@ -339,6 +343,7 @@ const MindMap = () => {
 
   useEffect(() => {
     const container = containerRef.current;
+    const canvasWrapper = canvasWrapperRef.current; // Capture ref value
     if (!container) return;
 
     const handleGlobalMove = (e) => {
@@ -366,9 +371,8 @@ const MindMap = () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      const currentCanvasWrapper = canvasWrapperRef.current;
-      if (currentCanvasWrapper) {
-        currentCanvasWrapper.classList.remove('no-transition');
+      if (canvasWrapper) { // Use captured ref value here
+        canvasWrapper.classList.remove('no-transition');
       }
     };
   }, [handleMouseMove, handleMouseUp, handlePanMouseDown, handlePanMouseMove, draggedNode, isPanning]);
@@ -389,8 +393,13 @@ const MindMap = () => {
           : node
       ))
     );
+    // If the node edited was the root node, update the map title here
+    const editedNode = nodes.find(n => n.id === largeEditorNodeId);
+    if (editedNode && editedNode.isRoot) {
+        setCurrentMapTitle(newTitle.trim() || 'Untitled Map');
+    }
     closeLargeEditor();
-  }, [largeEditorNodeId, closeLargeEditor]);
+  }, [largeEditorNodeId, closeLargeEditor, nodes]);
 
   const openLargeEditor = useCallback((nodeId) => {
     const node = nodes.find(n => n.id === nodeId);
@@ -437,8 +446,9 @@ const MindMap = () => {
 
   const isRootSelected = selectedNode ? nodes.find(n => n.id === selectedNode)?.isRoot : false;
 
+  // If no session, navigate to login. ProtectedRoute should handle this, but as a fallback.
   if (!session) {
-    return <Auth onAuthSuccess={handleAuthSuccess} />;
+    return null;
   }
 
   return (
@@ -449,12 +459,19 @@ const MindMap = () => {
         onDeleteNode={deleteNode}
         selectedNode={selectedNode}
         isRootSelected={isRootSelected}
-        onSave={saveMindMap}
-        onLoad={loadMindMap}
+        onSave={saveMindMapToServer}
+        // Removed onLoadMap and onNewMap props
+        // Removed userMindMaps and currentMindMapId props
         loading={loading}
         message={message}
         onLogout={handleLogout}
         userName={session?.user?.email || 'User'}
+      />
+
+      {/* New Title Editor Component */}
+      <MindMapTitleEditor
+        title={currentMapTitle}
+        onTitleChange={handleSetMapTitle}
       />
 
       <MindMapInstructions />

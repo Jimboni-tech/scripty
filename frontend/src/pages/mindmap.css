@@ -1,12 +1,24 @@
+/* src/pages/mindmap.css */
 
+/* Global styles and root variables */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+    /* Prevent body scroll */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-dark);
+    /* Ensure body background matches app */
+    color: var(--text-primary);
 }
 
 :root {
-
     --bg-dark: #0d0d0d;
     --surface-dark: #1a1a1a;
     --border-subtle: rgba(255, 255, 255, 0.07);
@@ -14,10 +26,10 @@
     --text-secondary: #a0a0a0;
     --text-faded: #606060;
 
-
     --node-bg-light: #2c2c2c;
-
     --node-root-bg-light: #3a3a3a;
+    --node-border-radius: 8px;
+    /* Defined here for consistency */
 
     --accent-red: #ef4444;
     --accent-orange: #f97316;
@@ -26,7 +38,6 @@
     --accent-blue: #3b82f6;
     --accent-purple: #a855f7;
     --accent-pink: #ec4899;
-
 
     --highlight-light: rgba(255, 255, 255, 0.1);
     --highlight-strong: rgba(255, 255, 255, 0.15);
@@ -39,17 +50,19 @@
     position: relative;
     overflow: hidden;
     user-select: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     cursor: grab;
     color: var(--text-primary);
+    /* Inherited by children */
+    display: flex;
+    /* To manage layout of toolbar/canvas/instructions */
+    flex-direction: column;
 }
 
 .mindmap-container.panning {
     cursor: grabbing;
 }
 
-
-
+/* Background grid pattern */
 .mindmap-container::before {
     content: '';
     position: absolute;
@@ -62,11 +75,13 @@
         linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
+    /* Allows clicks to pass through */
     z-index: 0;
     opacity: 0.25;
 }
 
 
+/* Canvas and Node styles (moved from original mindmap.css) */
 .mindmap-canvas-wrapper {
     position: absolute;
     width: 100%;
@@ -81,86 +96,6 @@
 .mindmap-canvas-wrapper.no-transition {
     transition: none !important;
 }
-
-
-.mindmap-toolbar {
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    padding: 10px 16px;
-    display: flex;
-    gap: 8px;
-    z-index: 10;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-
-.btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: inherit;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-    color: var(--text-primary);
-    background-color: transparent;
-}
-
-.btn-icon {
-    font-size: 14px;
-    opacity: 0.8;
-}
-
-
-.btn-primary {
-    background-color: var(--highlight-light);
-}
-
-.btn-primary:hover {
-    background-color: var(--highlight-strong);
-    transform: translateY(-1px);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-
-.btn-secondary {
-    color: var(--text-secondary);
-}
-
-.btn-secondary:hover {
-    background-color: var(--highlight-light);
-    color: var(--text-primary);
-    transform: translateY(-1px);
-}
-
-
-.btn-danger {
-    color: var(--accent-red);
-}
-
-.btn-danger:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--accent-red);
-    transform: translateY(-1px);
-}
-
 
 .mindmap-instructions {
     position: fixed;
@@ -210,7 +145,6 @@
     line-height: 1;
 }
 
-
 .mindmap-connections {
     position: absolute;
     inset: 0;
@@ -221,33 +155,27 @@
 }
 
 .connection-line {
-
-    stroke: rgba(255, 255, 255, 0.3); 
-    stroke-width: 1.5; 
-    fill: none; 
-    opacity: 1; 
-    transition: none; 
-
-
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 1;
+    transition: none;
 }
-
 
 .mindmap-node {
     position: absolute;
-
     cursor: grab;
     user-select: none;
     z-index: 10;
     transition: box-shadow 0.15s ease, transform 0.15s ease;
-
     will-change: transform;
     overflow: hidden;
+    border-radius: var(--node-border-radius);
+    /* Apply common border-radius */
 }
-
 
 .mindmap-node:hover {
     box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.05);
-
 }
 
 .node-selected {
@@ -256,13 +184,11 @@
         0 0 0 2px var(--node-color, var(--accent-blue)),
         0 0 0 5px rgba(255, 255, 255, 0.1),
         0 4px 12px rgba(0, 0, 0, 0.3) !important;
-
 }
 
 .node-dragging {
     cursor: grabbing;
     transition: none !important;
-
     z-index: 1000;
     box-shadow:
         0 0 0 3px var(--node-color, var(--accent-blue)),
@@ -280,28 +206,25 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.15s ease;
     letter-spacing: -0.01em;
-
     display: flex;
     align-items: center;
-
     justify-content: center;
-
+    border-radius: inherit;
+    /* Inherit border-radius from parent node */
 }
 
 .node-root .node-content {
     background-color: var(--node-root-bg-light);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-subtle);
-
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::before {
+    /* The &::before rule from your original code should be handled if you are using SCSS/SASS.
+       For plain CSS, you might need to adjust or remove it if it's causing issues.
+       Assuming it refers to a specific pseudo-element that will be defined elsewhere
+       or is a copy-paste error from a preprocessor. Removing for plain CSS if undefined. */
+    /* &::before {
         border-width: 3px;
         opacity: 0.8;
-    }
+    } */
 }
 
 .node-input {
@@ -328,30 +251,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .mindmap-toolbar {
-        bottom: 20px;
-        padding: 8px 12px;
-        gap: 6px;
-        border-radius: 10px;
-    }
-
     .mindmap-instructions {
         top: 20px;
         right: 20px;
         padding: 16px 18px;
         max-width: 200px;
         border-radius: 10px;
-    }
-
-    .btn {
-        padding: 8px 12px;
-        font-size: 12px;
-        gap: 4px;
-        border-radius: 6px;
-    }
-
-    .btn-icon {
-        font-size: 13px;
     }
 }
 
@@ -361,20 +266,12 @@
     }
 }
 
-
-.mindmap-node,
-.node-selected,
-.node-dragging {
-    border-radius: var(--node-border-radius, 8px);
-    overflow: hidden;
-}
-
+/* High contrast adjustments */
 @media (prefers-contrast: high) {
     .mindmap-container {
         background: #000000;
     }
 
-    .mindmap-toolbar,
     .mindmap-instructions {
         background: #000000;
         border-color: #ffffff;
@@ -393,6 +290,7 @@
 
     .node-content::before {
         display: none;
+        /* Ensure pseudo-elements are hidden for high contrast */
     }
 
     .node-root .node-content {
@@ -408,111 +306,4 @@
     .node-dragging {
         box-shadow: 0 0 0 4px #ffffff !important;
     }
-
-    .btn {
-        background: #333333;
-        color: #ffffff;
-        border-color: #ffffff;
-    }
-
-    .btn-primary:hover,
-    .btn-secondary:hover,
-    .btn-danger:hover {
-        background: #555555;
-    }
-
-    .btn-danger {
-        background: #cc0000;
-        color: #ffffff;
-        border-color: #ff0000;
-    }
-}
-
-.large-text-editor-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-}
-
-.large-text-editor-content {
-    background: var(--surface-dark);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    padding: 24px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    transform: scale(0.95);
-    opacity: 0;
-    animation: fadeInScaleUp 0.2s forwards ease-out;
-}
-
-@keyframes fadeInScaleUp {
-    from {
-        transform: scale(0.95);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.large-text-editor-textarea {
-    width: 100%;
-    height: 200px;
-
-    background: var(--bg-dark);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    padding: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: var(--text-primary);
-    line-height: 1.6;
-    resize: vertical;
-
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.large-text-editor-textarea:focus {
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.large-text-editor-textarea::placeholder {
-    color: var(--text-faded);
-}
-
-.large-text-editor-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.user-info {
-    margin-left: 16px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    font-weight: 500;
-    padding: 0 8px;
-}
-
-.logout-btn {
-    margin-left: auto;
 }
